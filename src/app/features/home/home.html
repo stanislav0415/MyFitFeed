@@ -1,24 +1,54 @@
-<div class="home-container">
-  <h1 class="title">🏋️‍♂️ Welcome to FitFeed</h1>
-  <p class="subtitle">Your fitness community – post, inspire, follow.</p>
 
-  <div class="actions">
-    <button class="btn primary">🔒 Login</button>
-    <button class="btn secondary">📝 Register</button>
-  </div>
+<section class="relative bg-cover bg-center h-[550px] flex items-center justify-center text-center" style="background-image: url('banner.jpg');">
 
-  <div class="features">
-    <div class="feature">
-      <h3>📸 Photos & Posts</h3>
-      <p>Share your workouts, progress, and tips – with or without photos.</p>
-    </div>
-    <div class="feature">
-      <h3>💬 Comments</h3>
-      <p>Join the conversation and motivate others.</p>
-    </div>
-    <div class="feature">
-      <h3>🏆 Motivation</h3>
-      <p>Follow friends and fitness influencers for daily inspiration.</p>
+<div class="absolute inset-0" style="background-color: rgba(0, 0, 0, 0.3);"></div>
+
+  <div class="relative z-10 px-4 text-white">
+    <h1 class="text-5xl font-extrabold mb-4">Welcome to FitFeed</h1>
+    <p class="text-lg max-w-xl mx-auto mb-6">Your personalized feed for fitness, nutrition, and community-driven challenges.</p>
+    <a routerLink="/signup" class="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg text-lg transition">
+      Get Started
+    </a>
+  </div>
+</section>
+
+<section class="py-16 bg-white dark:bg-gray-900 mb-10">
+  <div class="max-w-6xl mx-auto px-4 text-center">
+    <h2 class="text-3xl font-bold mb-10 dark:text-white">Why FitFeed?</h2>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      
+      <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition" data-aos="fade-up">
+        <div class="text-green-600 dark:text-green-400 mb-4">
+          <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 dark:text-white">Curated Fitness Plans</h3>
+        <p class="text-gray-600 dark:text-white">Tailored workouts that match your lifestyle, goals, and energy levels.</p>
+      </div>
+      
+      <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition" data-aos="fade-up" data-aos-delay="100">
+        <div class="text-green-600 dark:text-green-400 mb-4">
+          <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" fill="none" />
+            <path d="M12 8v4l3 3" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 dark:text-white">Real-Time Progress</h3>
+        <p class="text-gray-600 dark:text-white">Track your progress with real-time metrics and visualizations.</p>
+      </div>
+      
+      <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition" data-aos="fade-up" data-aos-delay="200">
+        <div class="text-green-600 dark:text-green-400 mb-4">
+          <svg class="w-12 h-12 mx-auto" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+            <path d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold mb-2 dark:text-white">Community Support</h3>
+        <p class="text-gray-600 dark:text-white">Join challenges, get motivation, and share progress with others.</p>
+      </div>
+      
     </div>
   </div>
-</div>
+</section>
+
