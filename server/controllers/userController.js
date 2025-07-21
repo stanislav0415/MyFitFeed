@@ -6,32 +6,24 @@ import { AUTH_COOKIE_NAME } from "../config/index.js";
 const userController = Router();
 
 userController.post('/register', isGuest, async (req, res) => {
-  const userData = req.body;
-
   try {
-    const token = await userService.register(userData);
+    const { user, token } = await userService.register(req.body);
 
-    res.cookie(AUTH_COOKIE_NAME, token, {
-      httpOnly: true,
-    });
+    res.cookie(AUTH_COOKIE_NAME, token, { httpOnly: true });
 
-    res.status(201).json({ message: 'User registered successfully', token });
+    res.status(201).json({ user, token });
   } catch (err) {
     res.status(400).json({ error: getErrorMessage(err) });
   }
 });
 
 userController.post('/login', isGuest, async (req, res) => {
-  const { email, password } = req.body;
-
   try {
-    const token = await userService.login(email, password);
+    const { user, token } = await userService.login(req.body.email, req.body.password);
 
-    res.cookie(AUTH_COOKIE_NAME, token, {
-      httpOnly: true,
-    });
+    res.cookie(AUTH_COOKIE_NAME, token, { httpOnly: true });
 
-    res.json({ message: 'Login successful', token });
+    res.json({ user, token });
   } catch (err) {
     res.status(401).json({ error: getErrorMessage(err) });
   }
