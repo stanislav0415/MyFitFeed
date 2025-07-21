@@ -1,26 +1,31 @@
+import User from '../models/user.js';
+import { generateAuthToken } from '../utils/userUtils.js';
+
 export default {
   async register(userData) {
-    if (userData.password !== userData.rePassword) {
-      throw new Error('Password Mismatch');
-    }
+  console.log('Registering user with data:', userData);
 
-    const existingUser = await User.findOne({ email: userData.email });
-    if (existingUser) {
-      throw new Error('User already exists!');
-    }
+  if (userData.password !== userData.rePassword) {
+    throw new Error('Password Mismatch');
+  }
 
-    
-    const newUser = await User.create(userData);
+  const existingUser = await User.findOne({ email: userData.email });
+  if (existingUser) {
+    throw new Error('User already exists!');
+  }
 
-   
-    const token = await generateAuthToken(newUser);
+  
+  const { rePassword, ...userDataToSave } = userData;
 
-   
-    const user = newUser.toObject();
-    delete user.password;
+  const newUser = await User.create(userDataToSave);
 
-    return { user, token };
-  },
+  const token = await generateAuthToken(newUser);
+
+  const user = newUser.toObject();
+  delete user.password;
+
+  return { user, token };
+},
 
   async login(email, password) {
     const user = await User.findOne({ email });
