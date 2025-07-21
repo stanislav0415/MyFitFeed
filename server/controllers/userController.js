@@ -7,7 +7,7 @@ const userController = Router();
 
 userController.post('/register', isGuest, async (req, res) => {
   try {
-   
+   console.log('Registering user with data:', req.body);
     const { user, token } = await userService.register(req.body);
 
     res.cookie(AUTH_COOKIE_NAME, token, { httpOnly: true });
