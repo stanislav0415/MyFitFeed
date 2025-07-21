@@ -2,7 +2,7 @@ import { Router } from "express";
 import userService from "../services/userService.js";
 import { isAuth, isGuest } from "../middlewares/authMiddleware.js";
 import { AUTH_COOKIE_NAME } from "../config/index.js";
-
+import { getErrorMessage } from "../utils/errorUtils.js";
 const userController = Router();
 
 userController.post('/register', isGuest, async (req, res) => {

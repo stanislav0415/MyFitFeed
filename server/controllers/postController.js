@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { isAuth } from "../middlewares/authMiddleware.js";
 import postService from "../services/postService.js"; 
-
+import { getErrorMessage } from "../utils/errorUtils.js";
 const postController = Router();
 postController.get('/', async (req, res) => {
   try {
