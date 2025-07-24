@@ -30,6 +30,7 @@ export default {
 
   async login(email, password) {
     const user = await User.findOne({ email });
+
     if (!user) {
       throw new Error('No such user exists!');
     }
