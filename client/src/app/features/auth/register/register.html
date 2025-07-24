@@ -1,71 +1,84 @@
 <section class="pt-10 pb-20 bg-white dark:bg-gray-900 px-4 flex justify-center">
   <div class="w-full max-w-md bg-gray-50 dark:bg-gray-800 p-8 rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">Create Your Account</h2>
-    
-    <form (ngSubmit)="onSubmit()" #registerForm="ngForm">
-      <div class="mb-4">
-        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
-        <input 
-          type="text" 
-          id="name" 
-          name="name"
-          [(ngModel)]="name"
-          required
-          class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500" 
-          placeholder="Jane Doe"
-        >
-      </div>
+    <h2 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">
+      Create Your Account
+    </h2>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
       <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
-        <input 
-          type="email" 
-          id="email" 
-          name="email"
-          [(ngModel)]="email"
-          required
-          email
-          class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500" 
-          placeholder="you@example.com"
-        >
-      </div>
-
-      <div class="mb-4">
-        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-        <input 
-          type="password" 
-          id="password" 
-          name="password"
-          [(ngModel)]="password"
-          required
-          minlength="4"
+        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Full Name
+        </label>
+        <input id="name" type="text" formControlName="name"
           class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
-        >
+          placeholder="Jane Doe" />
+        @if (isUsernameValid) {
+        <div class="text-sm text-red-500 mt-1">
+          {{ usernameErrorMessage }}
+        </div>
+        }
       </div>
 
-      <div class="mb-6">
-        <label for="confirmPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Confirm Password</label>
-        <input 
-          type="password" 
-          id="confirmPassword" 
-          name="confirmPassword"
-          [(ngModel)]="rePassword"
-          required
+
+      <div class="mb-4">
+        <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Email
+        </label>
+        <input id="email" type="email" formControlName="email"
           class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
-        >
+          placeholder="you@example.com" />
+        @if (isEmailValid) {
+        <div class="text-sm text-red-500 mt-1">
+          {{ emailErrorMessage }}
+        </div>
+        }
       </div>
 
-      <button 
-        type="submit" 
-        [disabled]="!registerForm.form.valid"
-        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition duration-200"
-      >
+
+      <div formGroupName="passwords" class="mb-4">
+
+        <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Password
+        </label>
+        <input id="password" type="password" formControlName="password"
+          class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="••••••••" />
+        @if (isPasswordsValid) {
+
+        <div class="text-sm text-red-500 mt-1">
+          {{ passwordErrorMessage }}
+        </div>
+
+        }
+
+        <label for="rePassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mt-4">
+          Confirm Password
+        </label>
+        <input id="rePassword" type="password" formControlName="rePassword"
+          class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="••••••••" />
+        @if (isPasswordsValid) {
+
+        <div class="text-sm text-red-500 mt-1">
+          {{ rePasswordErrorMessage }}
+        </div>
+
+        }
+
+      </div>
+      <div class="text-red-600 mt-2 text-center" [hidden]="!serverErrorMessage">
+        {{ serverErrorMessage }}
+      </div>
+
+      <button type="submit" [disabled]="registerForm.invalid"
+        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition duration-200">
         Sign Up
       </button>
     </form>
 
     <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-      Already have an account? 
+      Already have an account?
       <a routerLink="/login" class="text-green-600 hover:underline">Log in</a>
     </p>
   </div>

@@ -1,133 +1,168 @@
-import { Component, inject } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { AfterViewInit, Component, inject } from '@angular/core';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, RouterLink],
+  imports: [ReactiveFormsModule, FormsModule, RouterLink],
   templateUrl: './register.html',
   styleUrl: './register.css'
 })
-export class Register {
+export class Register implements AfterViewInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private formBuilder = inject(FormBuilder);
 
-  name: string = '';
-  email: string = '';
-  password: string = '';
-  rePassword: string = '';
-
-  nameError: boolean = false;
-  emailError: boolean = false;
-  passwordError: boolean = false;
-  rePasswordError: boolean = false;
-
-  nameErrorMessage: string = '';
-  emailErrorMessage: string = '';
-  passwordErrorMessage: string = '';
-  rePasswordErrorMessage: string = '';
-
-  validateName(): void {
-    if(!this.name){
-      this.nameError = true;
-      this.nameErrorMessage = 'Name is required!';
-    } else {
-      this.nameError = false;
-      this.nameErrorMessage = '';
-    }
+  registerForm: FormGroup;
+  serverErrorMessage: string | null = null;
+  constructor() {
+    this.registerForm = this.formBuilder.group({
+      name: ['', [Validators.required, Validators.minLength(5)]],
+      email: ['', [Validators.required, Validators.pattern(/^(?=.{6,})[a-zA-Z][a-zA-Z0-9._-]*@gmail\.(com|bg)$/)]],
+      phone: [''],
+      passwords: this.formBuilder.group({
+        password: ['', [Validators.required, Validators.minLength(5), Validators.pattern(/^[a-zA-Z0-9]+$/)]],
+        rePassword: ['', [Validators.required, this.passwordMatchValidator]],
+      })
+    })
   }
 
-  validateEmail(): void {
-    if(!this.email){
-      this.emailError = true;
-      this.emailErrorMessage = 'Email is required!';
-    } else if (!this.isValidEmail(this.email)) {
-      this.emailError = true;
-      this.emailErrorMessage = 'Email is not valid!';
-    } else {
-      this.emailError = false;
-      this.emailErrorMessage = '';
-    }
-  }
-
+  ngAfterViewInit(): void {
  
-  validatePassword(): void {
-    if(!this.password) {
-      this.passwordError = true;
-      this.passwordErrorMessage = 'Password is required!';
-    } else if (this.password.length < 4) {
-      this.passwordError = true;
-      this.passwordErrorMessage = 'Password must be at least 4 characters!';    
-    } else {
-      this.passwordError = false;
-      this.passwordErrorMessage = '';
+  }
+
+  get username(): AbstractControl<any, any> | null {
+    return this.registerForm.get('name');
+  }
+
+  get email(): AbstractControl<any, any> | null {
+    return this.registerForm.get('email');
+  }
+
+  get passwords(): FormGroup<any> {
+    return this.registerForm.get('passwords') as FormGroup;
+  }
+
+  get password(): AbstractControl<any, any> | null {
+    return this.passwords.get('password');
+  }
+
+  get rePassword(): AbstractControl<any, any> | null {
+    return this.passwords.get('rePassword');
+  }
+
+  get isUsernameValid(): boolean {
+    return this.username?.invalid && (this.username?.dirty || this.username?.touched) || false;
+  }
+
+  get isEmailValid(): boolean {
+    return this.email?.invalid && (this.email?.dirty || this.email?.touched) || false;
+  }
+
+  get isPasswordsValid(): boolean {
+    return this.passwords?.invalid && (this.passwords?.dirty || this.passwords?.touched) || false;
+  }
+
+  get usernameErrorMessage(): string {
+    if (this.username?.errors?.['required']) {
+      return 'Username is required!';
     }
 
-    if (this.rePassword) {
-      this.validateRePassword();
+    if (this.username?.errors?.['minlength']) {
+      return 'Username should have at least 5 characters!';
+    }
+
+    return '';
+  }
+
+  get emailErrorMessage(): string {
+    if (this.email?.errors?.['required']) {
+      return 'Email is required!';
+    }
+
+    if (this.email?.errors?.['pattern']) {
+      return 'Email is not valid!';
+    }
+
+    return '';
+  }
+
+  get passwordErrorMessage(): string {
+    if (this.password?.errors?.['required']) {
+      return 'Password is required!';
+    }
+
+    if (this.password?.errors?.['minlength']) {
+      return 'Password must be at least 5 characters!';
+    }
+
+    if (this.password?.errors?.['pattern']) {
+      return 'Password is not valid!';
+    }
+
+    if (this.password?.errors?.['passwordMismatch']) {
+      return 'Passwords do not match!';
+    }
+
+    return '';
+  }
+
+  get rePasswordErrorMessage(): string {
+    if (this.rePassword?.errors?.['required']) {
+      return 'Password is required!';
+    }
+
+    if (this.rePassword?.errors?.['minlength']) {
+      return 'Password must be at least 5 characters!';
+    }
+
+    if (this.rePassword?.errors?.['passwordMismatch']) {
+      return 'Passwords do not match!';
+    }
+
+    return '';
+  }
+
+  onSubmit(): void {
+    if (this.registerForm.valid) {
+      const { name, email } = this.registerForm.value;
+      const { password, rePassword } = this.registerForm.value.passwords;
+
+      this.authService.register(name, email, password, rePassword).subscribe({
+          next: (user) => {
+            this.router.navigate(['/home']);
+          },
+          error: (err) => {
+            this.serverErrorMessage = err?.error?.error || 'Registration failed. Please try again.';
+            this.markFormGroupTouched();
+          }
+        });;
     }
   }
 
-  validateRePassword(): void {
-    if(!this.rePassword) {
-      this.rePasswordError = true;
-      this.rePasswordErrorMessage = 'Repeat Password is required!';
-    } else if (this.password !== this.rePassword) {
-      this.rePasswordError = true;
-      this.rePasswordErrorMessage = 'Repeat Password does not match password!';    
-    } else {
-      this.rePasswordError = false;
-      this.rePasswordErrorMessage = '';
-    }
-  }
-
-  isFormValid(): boolean {
-    return Boolean(this.name) && 
-      Boolean(this.email) && 
-      Boolean(this.password) && 
-      Boolean(this.rePassword) && 
-      !this.nameError && 
-      !this.emailError && 
-      !this.passwordError && 
-      !this.rePasswordError;
-  }
-
-onSubmit(): void {
-
-  this.validateName();
-  this.validateEmail();
-  this.validatePassword();
-  this.validateRePassword();
-
-  if (this.isFormValid()) {
-    this.authService.register(
-      this.name,
-      this.email,
-      this.password,
-      this.rePassword
-    ).subscribe({
-      next: (success: boolean) => {
-        console.log('Registration success:', success);
-        if (success) {
-          this.router.navigate(['/home']);
-        } else {
-          alert('Registration failed. Please try again.');
-        }
-      },
-      error: (err) => {
-        console.error('Registration error:', err);
-        alert('An error occurred during registration.');
+  private markFormGroupTouched(): void {
+    Object.keys(this.registerForm.controls).forEach(key => {
+      const control = this.registerForm.get(key);
+      if (control instanceof FormGroup) {
+        Object.keys(control.controls).forEach(nestedKey => {
+          const nestedControl = control.get(nestedKey)
+          nestedControl?.markAllAsTouched();
+        })
+      } else {
+        control?.markAsTouched();
       }
-    });
-  }
-}
-
-
-
-  private isValidEmail(email: string): boolean {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    return emailRegex.test(email);
+    })
   }
 
+  private passwordMatchValidator(passwordsControl: AbstractControl): ValidationErrors | null {
+    const password = passwordsControl.get('password');
+    const rePassword = passwordsControl.get('rePassword');
+
+    if (password && rePassword && password.value !== rePassword.value) {
+      return { passwordMismatch: true };
+    }
+
+    return null;
+  }
 }
