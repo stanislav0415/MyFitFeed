@@ -3,7 +3,7 @@ import { generateAuthToken } from '../utils/userUtils.js';
 
 export default {
   async register(userData) {
-  console.log('Registering user with data:', userData);
+
 
   if (userData.password !== userData.rePassword) {
     throw new Error('Password Mismatch');
