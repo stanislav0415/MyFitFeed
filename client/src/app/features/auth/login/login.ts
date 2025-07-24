@@ -13,7 +13,7 @@ export class Login {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private authService = inject(AuthService);
-
+  serverErrorMessage: string | null = null;
   loginForm: FormGroup = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, Validators.minLength(5)]],
@@ -57,6 +57,7 @@ export class Login {
         },
         error: (err) => {
           console.error('Login failed:', err);
+          this.serverErrorMessage =  err.error.error ||'Login failed. Please check your credentials.';
           this.loginForm.markAllAsTouched();
         },
       });

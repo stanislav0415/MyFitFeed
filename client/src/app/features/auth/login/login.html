@@ -29,6 +29,9 @@
           {{ passwordErrorMessage }}
         </p>
       </div>
+       <div class="text-red-600 mt-2 text-center" [hidden]="!serverErrorMessage">
+        {{ serverErrorMessage }}
+      </div>
 
       <button
         type="submit"
