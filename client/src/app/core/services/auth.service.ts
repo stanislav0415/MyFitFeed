@@ -18,6 +18,11 @@ export class AuthService {
   public currentUser = this._currentUser.asReadonly();
 
   constructor(private httpClient: HttpClient) {
+    if(localStorage.getItem('user')) {
+      const user = JSON.parse(localStorage.getItem('user')!);
+      this._currentUser.set(user);
+      this._isLoggedIn.set(true);
+    }
   }
 
 
