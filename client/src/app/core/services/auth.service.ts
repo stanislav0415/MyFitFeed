@@ -18,10 +18,6 @@ export class AuthService {
   public currentUser = this._currentUser.asReadonly();
 
   constructor(private httpClient: HttpClient) {
-    const token = localStorage.getItem('auth_token');
-    if (token) {
-      this._isLoggedIn.set(true);
-    }
   }
 
 
@@ -29,10 +25,14 @@ export class AuthService {
     const body = { name, email, password, rePassword };
 
     return this.httpClient.post<User>(this.registerUrl, body, {
-      withCredentials: true
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      
     }).pipe(
       tap(response => {
         this._currentUser.set(response);
+        localStorage.setItem('user',JSON.stringify(response));
         this._isLoggedIn.set(true);
       })
     );
@@ -42,26 +42,25 @@ export class AuthService {
     const body = { email, password };
 
     return this.httpClient.post<User>(this.loginUrl, body, {
-      withCredentials: true
+      headers: {
+        'Content-Type': 'application/json'
+      },
+     
     }).pipe(
       tap(response => {
         this._currentUser.set(response);
+        localStorage.setItem('user',JSON.stringify(response));
         this._isLoggedIn.set(true);
       })
     );
   }
 
-
-
   logout(): void {
-    this.httpClient.post('http://localhost:3000/users/logout', {}, {
-      withCredentials: true
-    }).subscribe(() => {
-      this._currentUser.set(null);
-      this._isLoggedIn.set(false);
-    });
+    this._currentUser.set(null);
+    this._isLoggedIn.set(false);
+    localStorage.removeItem('user');
   }
-
+  
   getCurrentUser(): User | null {
     return this._currentUser();
   }
