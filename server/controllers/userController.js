@@ -7,12 +7,12 @@ const userController = Router();
 
 userController.post('/register', isGuest, async (req, res) => {
   try {
-   console.log('Registering user with data:', req.body);
+
     const { user, token } = await userService.register(req.body);
 
     res.cookie(AUTH_COOKIE_NAME, token, { httpOnly: true });
 
-    res.status(201).json({ user, token });
+    res.status(201).json(user);
   } catch (err) {
     res.status(400).json({ error: getErrorMessage(err) });
   }
@@ -24,7 +24,7 @@ userController.post('/login', isGuest, async (req, res) => {
 
     res.cookie(AUTH_COOKIE_NAME, token, { httpOnly: true });
 
-    res.json({ user, token });
+    res.json(user);
   } catch (err) {
     res.status(401).json({ error: getErrorMessage(err) });
   }

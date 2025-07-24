@@ -1,5 +1,6 @@
 import User from '../models/user.js';
 import { generateAuthToken } from '../utils/userUtils.js';
+import bcrypt from 'bcrypt';
 
 export default {
   async register(userData) {
