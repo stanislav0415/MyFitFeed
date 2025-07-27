@@ -1,0 +1,69 @@
+<section class="pt-10 pb-20 bg-white dark:bg-gray-900 px-4 flex justify-center">
+  <div class="w-full max-w-md bg-gray-50 dark:bg-gray-800 p-8 rounded-lg shadow-md">
+    <h2 class="text-2xl font-bold text-center mb-6 text-gray-900 dark:text-white">
+      Create New Post
+    </h2>
+
+    <form [formGroup]="postForm" (ngSubmit)="onSubmit()">
+      
+      <!-- Post Title -->
+      <div class="mb-4">
+        <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Post Title
+        </label>
+        <input id="title" type="text" formControlName="title"
+          class="mt-1 w-full px-4 py-2 text-xs rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 
+          text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="Enter post title" />
+        @if (postForm.get('title')?.invalid && postForm.get('title')?.touched) {
+          <div class="text-sm text-red-500 mt-1">
+            Title is required.
+          </div>
+        }
+      </div>
+
+      <!-- Post Description -->
+      <div class="mb-4">
+        <label for="description" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Caption
+        </label>
+        <textarea id="description" rows="5" formControlName="description"
+          class="mt-1 w-full px-4 py-4 text-base rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 
+          text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
+          placeholder="Write your post caption here..."></textarea>
+        @if (postForm.get('description')?.invalid && postForm.get('description')?.touched) {
+          <div class="text-sm text-red-500 mt-1">
+            Caption is required.
+          </div>
+        }
+      </div>
+
+      <!-- Image Upload -->
+      <div class="mb-4">
+        <label for="image" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Upload Image
+        </label>
+        <input id="image" type="file" (change)="onFileChange($event)"
+          class="mt-1 w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer 
+          bg-gray-50 dark:text-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500 
+          dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" />
+        @if (imageError) {
+          <div class="text-sm text-red-500 mt-1">
+            {{ imageError }}
+          </div>
+        }
+      </div>
+
+      <!-- Server Error -->
+      <div class="text-red-600 mt-2 text-center" [hidden]="!serverErrorMessage">
+        {{ serverErrorMessage }}
+      </div>
+
+      <!-- Submit Button -->
+      <button type="submit" [disabled]="postForm.invalid"
+        class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded-md transition duration-200">
+        ADD
+      </button>
+    </form>
+  </div>
+</section>
