@@ -6,17 +6,28 @@ const postSchema = new Schema({
     ref: 'User',
     required: true,
   },
-  content: {
+  title: {
+    type: String,
+    required: true,
+    minLength: 1,
+    maxLength: 50,
+  },
+  description: {
     type: String,
     required: true,
     minLength: 1,
     maxLength: 500,
   },
- image: {
-           type: String,
-           validate: /^https?:\/\//i,
-   
-       },
+  imageUrl: {
+    type: String,
+    required: false,
+    validate: {
+      validator: function (value) {
+        return !value || /^https?:\/\/.+\..+/i.test(value);
+      },
+      message: 'Image URL must be a valid HTTP/HTTPS URL.',
+    },
+  },
   likes: [
     {
       type: Types.ObjectId,
