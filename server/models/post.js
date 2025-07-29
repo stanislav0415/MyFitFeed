@@ -23,7 +23,7 @@ const postSchema = new Schema({
     required: false,
     validate: {
       validator: function (value) {
-        return !value || /^https?:\/\/.+\..+/i.test(value);
+        return !value || /^https?:\/\/.+/i.test(value);
       },
       message: 'Image URL must be a valid HTTP/HTTPS URL.',
     },
@@ -45,8 +45,17 @@ const postSchema = new Schema({
     type: Date,
     default: Date.now,
   },
+},
+{
+  toJSON: {
+    virtuals: true,
+    versionKey: false,
+    transform: (_, ret) => {
+      ret.id = ret._id;
+      delete ret._id;
+    },
+  },
 });
-
 const Post = model('Post', postSchema);
 
 export default Post;
