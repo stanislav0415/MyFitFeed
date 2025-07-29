@@ -22,6 +22,7 @@ export default {
   },
 
   create(postData, userId) {
+
     return Post.create({ ...postData, user: userId });
   },
 
