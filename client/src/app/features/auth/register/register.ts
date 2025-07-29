@@ -1,168 +1,80 @@
 import { AfterViewInit, Component, inject } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { RegisterFormService } from '../forms/register.form';
 
 @Component({
   selector: 'app-register',
   imports: [ReactiveFormsModule, FormsModule, RouterLink],
   templateUrl: './register.html',
-  styleUrl: './register.css'
+  styleUrl: './register.css',
 })
 export class Register implements AfterViewInit {
   private authService = inject(AuthService);
   private router = inject(Router);
-  private formBuilder = inject(FormBuilder);
+  private formService = inject(RegisterFormService);
 
-  registerForm: FormGroup;
+  registerForm = this.formService.createForm();
   serverErrorMessage: string | null = null;
-  constructor() {
-    this.registerForm = this.formBuilder.group({
-      name: ['', [Validators.required, Validators.minLength(5)]],
-      email: ['', [Validators.required, Validators.pattern(/^(?=.{6,})[a-zA-Z][a-zA-Z0-9._-]*@gmail\.(com|bg)$/)]],
-      phone: [''],
-      passwords: this.formBuilder.group({
-        password: ['', [Validators.required, Validators.minLength(5), Validators.pattern(/^[a-zA-Z0-9]+$/)]],
-        rePassword: ['', [Validators.required, this.passwordMatchValidator]],
-      })
-    })
+
+  ngAfterViewInit(): void {}
+
+  get username() {
+    return this.formService.getUsernameControl(this.registerForm);
   }
 
-  ngAfterViewInit(): void {
- 
+  get email() {
+    return this.formService.getEmailControl(this.registerForm);
   }
 
-  get username(): AbstractControl<any, any> | null {
-    return this.registerForm.get('name');
+  get password() {
+    return this.formService.getPasswordControl(this.registerForm);
   }
 
-  get email(): AbstractControl<any, any> | null {
-    return this.registerForm.get('email');
-  }
-
-  get passwords(): FormGroup<any> {
-    return this.registerForm.get('passwords') as FormGroup;
-  }
-
-  get password(): AbstractControl<any, any> | null {
-    return this.passwords.get('password');
-  }
-
-  get rePassword(): AbstractControl<any, any> | null {
-    return this.passwords.get('rePassword');
+  get rePassword() {
+    return this.formService.getRePasswordControl(this.registerForm);
   }
 
   get isUsernameValid(): boolean {
-    return this.username?.invalid && (this.username?.dirty || this.username?.touched) || false;
+    return this.formService.isUsernameError(this.registerForm);
   }
 
   get isEmailValid(): boolean {
-    return this.email?.invalid && (this.email?.dirty || this.email?.touched) || false;
+    return this.formService.isEmailError(this.registerForm);
   }
 
   get isPasswordsValid(): boolean {
-    return this.passwords?.invalid && (this.passwords?.dirty || this.passwords?.touched) || false;
+    return this.formService.isPasswordError(this.registerForm);
   }
 
   get usernameErrorMessage(): string {
-    if (this.username?.errors?.['required']) {
-      return 'Username is required!';
-    }
-
-    if (this.username?.errors?.['minlength']) {
-      return 'Username should have at least 5 characters!';
-    }
-
-    return '';
+    return this.formService.getUsernameErrorMessage(this.registerForm);
   }
 
   get emailErrorMessage(): string {
-    if (this.email?.errors?.['required']) {
-      return 'Email is required!';
-    }
-
-    if (this.email?.errors?.['pattern']) {
-      return 'Email is not valid!';
-    }
-
-    return '';
+    return this.formService.getEmailErrorMessage(this.registerForm);
   }
 
   get passwordErrorMessage(): string {
-    if (this.password?.errors?.['required']) {
-      return 'Password is required!';
-    }
-
-    if (this.password?.errors?.['minlength']) {
-      return 'Password must be at least 5 characters!';
-    }
-
-    if (this.password?.errors?.['pattern']) {
-      return 'Password is not valid!';
-    }
-
-    if (this.password?.errors?.['passwordMismatch']) {
-      return 'Passwords do not match!';
-    }
-
-    return '';
+    return this.formService.getPasswordErrorMessage(this.registerForm);
   }
 
   get rePasswordErrorMessage(): string {
-    if (this.rePassword?.errors?.['required']) {
-      return 'Password is required!';
-    }
-
-    if (this.rePassword?.errors?.['minlength']) {
-      return 'Password must be at least 5 characters!';
-    }
-
-    if (this.rePassword?.errors?.['passwordMismatch']) {
-      return 'Passwords do not match!';
-    }
-
-    return '';
+    return this.formService.getRePasswordErrorMessage(this.registerForm);
   }
 
   onSubmit(): void {
-    if (this.registerForm.valid) {
-      const { name, email } = this.registerForm.value;
-      const { password, rePassword } = this.registerForm.value.passwords;
+    if (this.formService.isFormValid(this.registerForm)) {
+      const { username, email, password, rePassword } = this.formService.getFormValue(this.registerForm);
 
-      this.authService.register(name, email, password, rePassword).subscribe({
-          next: (user) => {
-            this.router.navigate(['/home']);
-          },
-          error: (err) => {
-            this.serverErrorMessage = err?.error?.error || 'Registration failed. Please try again.';
-            this.markFormGroupTouched();
-          }
-        });;
+      this.authService.register(username, email, password, rePassword).subscribe({
+        next: () => this.router.navigate(['/home']),
+        error: (err) => {
+          this.serverErrorMessage = err?.error?.error || 'Registration failed. Please try again.';
+          this.formService.markFormTouched(this.registerForm);
+        },
+      });
     }
-  }
-
-  private markFormGroupTouched(): void {
-    Object.keys(this.registerForm.controls).forEach(key => {
-      const control = this.registerForm.get(key);
-      if (control instanceof FormGroup) {
-        Object.keys(control.controls).forEach(nestedKey => {
-          const nestedControl = control.get(nestedKey)
-          nestedControl?.markAllAsTouched();
-        })
-      } else {
-        control?.markAsTouched();
-      }
-    })
-  }
-
-  private passwordMatchValidator(passwordsControl: AbstractControl): ValidationErrors | null {
-    const password = passwordsControl.get('password');
-    const rePassword = passwordsControl.get('rePassword');
-
-    if (password && rePassword && password.value !== rePassword.value) {
-      return { passwordMismatch: true };
-    }
-
-    return null;
   }
 }
