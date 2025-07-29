@@ -11,8 +11,10 @@ export class PostService {
   constructor(private httpClient: HttpClient) {}
 
   createPost(postData: Omit<Post, 'id' | 'createdAt'>): Observable<Post> {
+    const token = localStorage.getItem('token') ? JSON.parse(localStorage.getItem('token')!) : null;
     return this.httpClient.post<Post>(`${this.apiUrl}/create`, postData, {
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', 
+      Authorization: `Bearer ${token ?? ''}`},
     });
   }
 
