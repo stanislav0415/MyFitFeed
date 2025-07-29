@@ -1,0 +1,8 @@
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+  @for (post of posts$ | async; track post.id) {
+    <app-feed-item [post]="post"></app-feed-item>
+  }
+  @empty {
+    <p class="text-center text-gray-500 col-span-full">No posts found or still loading...</p>
+  }
+</div>
