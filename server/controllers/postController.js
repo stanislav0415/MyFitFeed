@@ -14,13 +14,14 @@ postController.get('/', async (req, res) => {
 
 postController.post('/create', isAuth, async (req, res) => {
   const postData = req.body;
-  console.log(postData)
   const userId = req.user.id;
+
 
   try {
     const createdPost = await postService.create(postData, userId);
     res.status(201).json(createdPost);
   } catch (err) {
+    console.error('Error creating post:', err);
     res.status(400).json({ error: getErrorMessage(err) });
   }
 });
