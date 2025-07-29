@@ -14,7 +14,6 @@ const postSchema = new Schema({
   },
  image: {
            type: String,
-           require: true,
            validate: /^https?:\/\//i,
    
        },

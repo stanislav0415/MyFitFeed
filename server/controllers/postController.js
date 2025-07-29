@@ -14,6 +14,7 @@ postController.get('/', async (req, res) => {
 
 postController.post('/create', isAuth, async (req, res) => {
   const postData = req.body;
+  console.log(postData)
   const userId = req.user.id;
 
   try {
