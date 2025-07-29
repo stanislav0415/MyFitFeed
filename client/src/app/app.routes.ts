@@ -21,5 +21,9 @@ export const routes: Routes = [
     }, {
         path: 'create',
         loadComponent: () => import('./features/posts/create/create').then(c => c.Create)
+    },
+    {
+        path: 'posts',
+        loadComponent: () => import('./features/feed/feed-board/feed-board').then(c => c.FeedBoard)
     }
 ];
