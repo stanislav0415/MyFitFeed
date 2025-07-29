@@ -1,53 +1,73 @@
-import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { PostFormService } from '../forms/create.form';
+import { PostService } from '../../../core/services/post.service'; 
 
 @Component({
-  selector: 'create',
-  standalone: true, 
-  imports: [ReactiveFormsModule, FormsModule, RouterLink],
+  selector: 'app-create-post',
+  standalone: true,
+  imports: [FormsModule, ReactiveFormsModule],
   templateUrl: './create.html',
+  styleUrl: './create.css',
 })
 export class Create {
-  postForm: FormGroup;
-  imageFile: File | null = null;
-  imageError: string = '';
-  serverErrorMessage: string = '';
+  private postFormService = inject(PostFormService);
+  private postService = inject(PostService);
+  private router = inject(Router);
 
-  constructor(private fb: FormBuilder) {
-    this.postForm = this.fb.group({
-      title: ['', Validators.required],
-      description: ['', Validators.required],
-    });
+  postForm = this.postFormService.createForm();
+  serverErrorMessage: string | null = null;
+
+  get title() {
+    return this.postFormService.getTitleControl(this.postForm);
   }
 
-  onFileChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        this.imageError = 'Please upload a valid image file.';
-        this.imageFile = null;
-      } else {
-        this.imageError = '';
-        this.imageFile = file;
-      }
-    }
+  get description() {
+    return this.postFormService.getDescriptionControl(this.postForm);
   }
 
-  onSubmit() {
-    if (this.postForm.invalid || !this.imageFile) {
-      if (!this.imageFile) {
-        this.imageError = 'Image is required.';
-      }
-      return;
+  get imageUrl() {
+    return this.postFormService.getImageUrlControl(this.postForm);
+  }
+
+  get isTitleError() {
+    return this.postFormService.isTitleError(this.postForm);
+  }
+
+  get isDescriptionError() {
+    return this.postFormService.isDescriptionError(this.postForm);
+  }
+
+  get isImageUrlError() {
+    return this.postFormService.isImageUrlError(this.postForm);
+  }
+
+  get titleErrorMessage() {
+    return this.postFormService.getTitleErrorMessage(this.postForm);
+  }
+
+  get descriptionErrorMessage() {
+    return this.postFormService.getDescriptionErrorMessage(this.postForm);
+  }
+
+  get imageUrlErrorMessage() {
+    return this.postFormService.getImageUrlErrorMessage(this.postForm);
+  }
+
+  onSubmit(): void {
+    if (this.postFormService.isFormValid(this.postForm)) {
+      const postData = this.postFormService.getFormValue(this.postForm);
+      this.postService.createPost(postData)
+      .subscribe({
+        next: () => this.router.navigate(['/home']),
+        error: (err) => {
+          this.serverErrorMessage = err?.error?.message || 'Something went wrong. Please try again.';
+          this.postFormService.markFormTouched(this.postForm);
+        },
+      });
+    } else {
+      this.postFormService.markFormTouched(this.postForm);
     }
-
-    const formData = new FormData();
-    formData.append('title', this.postForm.value.title);
-    formData.append('description', this.postForm.value.description);
-    formData.append('image', this.imageFile);
-
-    console.log('Submitting post', formData);
   }
 }
