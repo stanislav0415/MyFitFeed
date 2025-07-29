@@ -37,7 +37,7 @@ export class AuthService {
     }).pipe(
       tap(response => {
         this._currentUser.set(response);
-        localStorage.setItem('user',JSON.stringify(response));
+        localStorage.setItem('token',JSON.stringify(response.token));
         this._isLoggedIn.set(true);
       })
     );
@@ -54,7 +54,7 @@ export class AuthService {
     }).pipe(
       tap(response => {
         this._currentUser.set(response);
-        localStorage.setItem('user',JSON.stringify(response));
+        localStorage.setItem('token',JSON.stringify(response.token));
         this._isLoggedIn.set(true);
       })
     );
