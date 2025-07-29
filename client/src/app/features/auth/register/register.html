@@ -7,12 +7,12 @@
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
 
       <div class="mb-4">
-        <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-          Full Name
+        <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+         Username
         </label>
-        <input id="name" type="text" formControlName="name"
+        <input id="username" type="text" formControlName="username"
           class="mt-1 w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500"
-          placeholder="Jane Doe" />
+          placeholder="Jane.Doe" />
         @if (isUsernameValid) {
         <div class="text-sm text-red-500 mt-1">
           {{ usernameErrorMessage }}

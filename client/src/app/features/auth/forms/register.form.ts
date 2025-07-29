@@ -9,7 +9,7 @@ export class RegisterFormService {
 
     createForm(): FormGroup {
         return this.formBuilder.group({
-            name: ['', [Validators.required, Validators.minLength(5)]],
+            username: ['', [Validators.required, Validators.minLength(5)]],
             email: ['', [Validators.required, Validators.pattern(/^(?=.{6,})[a-zA-Z][a-zA-Z0-9._-]*@gmail\.(com|bg)$/)]],
             phone: [''],
             passwords: this.formBuilder.group({
