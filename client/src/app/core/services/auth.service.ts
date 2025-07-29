@@ -26,8 +26,8 @@ export class AuthService {
   }
 
 
-  register(name: string, email: string, password: string, rePassword: string): Observable<User> {
-    const body = { name, email, password, rePassword };
+  register(username: string, email: string, password: string, rePassword: string): Observable<User> {
+    const body = { username, email, password, rePassword };
 
     return this.httpClient.post<User>(this.registerUrl, body, {
       headers: {
@@ -37,6 +37,7 @@ export class AuthService {
     }).pipe(
       tap(response => {
         this._currentUser.set(response);
+         localStorage.setItem('user',JSON.stringify(response));
         localStorage.setItem('token',JSON.stringify(response.token));
         this._isLoggedIn.set(true);
       })
@@ -54,6 +55,7 @@ export class AuthService {
     }).pipe(
       tap(response => {
         this._currentUser.set(response);
+         localStorage.setItem('user',JSON.stringify(response));
         localStorage.setItem('token',JSON.stringify(response.token));
         this._isLoggedIn.set(true);
       })
