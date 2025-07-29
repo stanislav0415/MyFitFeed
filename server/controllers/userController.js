@@ -12,7 +12,7 @@ userController.post('/register', isGuest, async (req, res) => {
 
     res.cookie(AUTH_COOKIE_NAME, token, { httpOnly: true });
 
-    res.status(201).json(user);
+    res.status(201).json({user,token});
   } catch (err) {
     res.status(400).json({ error: getErrorMessage(err) });
   }
@@ -24,7 +24,7 @@ userController.post('/login', isGuest, async (req, res) => {
 
     res.cookie(AUTH_COOKIE_NAME, token, { httpOnly: true });
 
-    res.json(user);
+    res.json({user,token});
   } catch (err) {
     res.status(401).json({ error: getErrorMessage(err) });
   }
