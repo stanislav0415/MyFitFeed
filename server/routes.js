@@ -6,7 +6,7 @@ import postController from "./controllers/postController.js";
 const routes = Router();
 
 routes.use('/users', userController);
-routes.use('/post', postController);
+routes.use('/posts', postController);
 routes.all('*url', (req,res)=> {
     res.status(404).json({message: 'Not Found!'});
 })
