@@ -5,7 +5,6 @@ import bcrypt from 'bcrypt';
 export default {
   async register(userData) {
 
-
   if (userData.password !== userData.rePassword) {
     throw new Error('Password Mismatch');
   }
@@ -13,6 +12,10 @@ export default {
   const existingUser = await User.findOne({ email: userData.email });
   if (existingUser) {
     throw new Error('User already exists!');
+  }
+  const existingUsername = await User.findOne({ username: userData.username });
+  if (existingUsername) {
+    throw new Error('Username is taken!');
   }
 
   
