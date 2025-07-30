@@ -34,21 +34,24 @@ postController.get('/:postId', async (req, res) => {
 
   try {
     const post = await postService.getOne(postId);
-
     if (!post) {
       return res.status(404).json({ error: "Post not found" });
     }
 
-    const userId = req.user?.id;
-    const isOwner = userId && post.user.equals(userId);
-    const isLiked = userId && post.likes.some(likeUserId => likeUserId.equals(userId));
+    const userId = req.user?.id?.toString(); 
+    const postOwnerId = post.user?._id?.toString() || post.user?.toString();
 
-    res.json({ post, isOwner, isLiked });
+    const isOwner = userId && postOwnerId === userId;
+    const isLiked = userId && post.likes.some(likeUserId => likeUserId.toString() === userId);
+
+    console.log('Post owner ID:', postOwnerId);
+    console.log('Current user ID:', userId);
+
+    res.json({ post, isOwner: !!isOwner, isLiked: !!isLiked });
   } catch (err) {
     res.status(500).json({ error: getErrorMessage(err) });
   }
 });
-
 postController.post('/:postId/like', isAuth, async (req, res) => {
   const postId = req.params.postId;
   const userId = req.user.id;

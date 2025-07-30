@@ -17,8 +17,6 @@ export default {
   if (existingUsername) {
     throw new Error('Username is taken!');
   }
-
-  
   const { rePassword, ...userDataToSave } = userData;
 
   const newUser = await User.create(userDataToSave);
