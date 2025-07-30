@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 
 export const routes: Routes = [
- {
+    {
         path: '',
         redirectTo: '/home',
         pathMatch: 'full'
@@ -15,7 +15,7 @@ export const routes: Routes = [
         path: 'register',
         loadComponent: () => import('./features/auth/register/register').then(c => c.Register)
     },
-     {
+    {
         path: 'login',
         loadComponent: () => import('./features/auth/login/login').then(c => c.Login)
     }, {
@@ -25,5 +25,8 @@ export const routes: Routes = [
     {
         path: 'posts',
         loadComponent: () => import('./features/feed/feed-board/feed-board').then(c => c.FeedBoard)
+    }, {
+        path: 'posts/:id',
+        loadComponent: () => import('./features/posts/details/details').then(c => c.Details)
     }
 ];
