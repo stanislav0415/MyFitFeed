@@ -22,9 +22,12 @@ export class PostService {
     return this.httpClient.get<Post[]>(this.apiUrl);
   }
 
-  getPostById(id: string): Observable<Post> {
-    return this.httpClient.get<Post>(`${this.apiUrl}/${id}`);
+
+
+  getPostById(id: string): Observable<{ post: Post, isOwner: boolean, isLiked: boolean }> {
+  return this.httpClient.get<{ post: Post, isOwner: boolean, isLiked: boolean }>(`${this.apiUrl}/${id}`);
   }
+
 
   updatePost(id: string, postData: Partial<Post>): Observable<Post> {
     return this.httpClient.put<Post>(`${this.apiUrl}/${id}`, postData, {
