@@ -2,7 +2,9 @@ import { Router } from "express";
 import { isAuth } from "../middlewares/authMiddleware.js";
 import postService from "../services/postService.js"; 
 import { getErrorMessage } from "../utils/errorUtils.js";
+  
 const postController = Router();
+
 postController.get('/', async (req, res) => {
   try {
     const posts = await postService.getAll();
@@ -37,7 +39,6 @@ postController.get('/:postId', async (req, res) => {
       return res.status(404).json({ error: "Post not found" });
     }
 
-   
     const userId = req.user?.id;
     const isOwner = userId && post.user.equals(userId);
     const isLiked = userId && post.likes.some(likeUserId => likeUserId.equals(userId));
