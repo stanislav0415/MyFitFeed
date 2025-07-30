@@ -10,5 +10,5 @@ export interface Post {
     username: string;
   };
 
-  likes?: string[]; 
+  likes?: string[];  
 }
