@@ -4,11 +4,17 @@ export interface Post {
   description: string;
   imageUrl?: string;
   createdAt?: string;
-
+  likes?: string[]; 
+  comments?: {
+    user: {
+      _id: string;
+      username: string;
+    };
+    comment: string;
+    createdAt: string;
+  }[];
   user?: {
     _id: string;
     username: string;
   };
-
-  likes?: string[];  
 }
