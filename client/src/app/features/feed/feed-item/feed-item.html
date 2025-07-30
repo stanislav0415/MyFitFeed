@@ -23,7 +23,7 @@
         />
       }
     </a>
-
+ @if(isLoggedIn) {
     <div class="flex gap-8 text-sm text-gray-500 dark:text-gray-400 mt-3">
       <button class="flex items-center gap-1 hover:text-red-500">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -39,6 +39,6 @@
             d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.985 9.985 0 01-4.09-.868L3 21l1.03-3.44A7.983 7.983 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
         </svg>
       </button>
-    </div>
+    </div>}
   </div>
 </div>
