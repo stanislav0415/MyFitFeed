@@ -2,7 +2,7 @@ import Post from '../models/post.js';
 
 export default {
   getAll(filter = {}) {
-    let query = Post.find().populate('user');
+    let query = Post.find().populate('user', 'username');
 
     if (filter.search) {
       query = query.find({
