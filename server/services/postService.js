@@ -18,8 +18,11 @@ export default {
   },
 
   getOne(postId) {
-    return Post.findById(postId).populate('user');
-  },
+  return Post.findById(postId)
+    .populate('user', 'username') 
+    .populate('comments.user', 'username'); 
+},
+
 
   create(postData, userId) {
 
