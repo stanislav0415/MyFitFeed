@@ -1,44 +1,76 @@
-<div class="flex justify-center items-center min-h-screen bg-gray-900 text-white px-4">
+<div class="flex justify-center items-center min-h-screen bg-gray-900 text-white px-4 mb-20">
   <div class="w-full max-w-5xl p-10 bg-gray-800 rounded-2xl shadow-2xl">
 
     @if (!loading && post) {
       <h1 class="text-4xl font-extrabold mb-4 text-center">{{ post.title }}</h1>
 
       <p class="text-lg text-gray-400 mb-6 text-center">
-        {{ post.createdAt | date: 'medium' }} by 
+        {{ post.createdAt | date: 'medium' }} by
         <span class="font-semibold text-white">{{ post.user?.username }}</span>
       </p>
 
+      <p class="mb-8 text-xl leading-relaxed text-center">{{ post.description }}</p>
+
+      @if (post.imageUrl) {
+        <div class="flex justify-center mb-8">
+          <img [src]="post.imageUrl" alt="Post image"
+            class="rounded-xl max-h-[500px] max-w-full object-contain border border-gray-600" />
+        </div>
+      }
+
       @if (isOwner) {
-        <div class="flex justify-center gap-4 mb-6">
-          <button class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-md text-white">
-            Edit
-          </button>
-          <button class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white">
-            Delete
+        <div class="flex justify-center gap-4 mt-4 mb-4">
+          <a [routerLink]="['/posts', post.id, 'edit']"
+            class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 rounded-md text-black font-semibold">
+            ✏️ Edit
+          </a>
+          <button (click)="deletePost()"
+            class="px-4 py-2 bg-red-600 hover:bg-red-700 rounded-md text-white font-semibold">
+            🗑️ Delete
           </button>
         </div>
       }
 
-      <p class="mb-8 text-xl leading-relaxed text-center">{{ post.description }}</p>
+      @if (isLoggedIn) {
+        <div class="flex justify-center items-center gap-12 mb-6 text-gray-300 text-lg select-none">
+          <div class="flex items-center cursor-pointer" (click)="toggleLike()"
+            [ngClass]="isLiked ? 'text-red-600' : 'text-gray-400 hover:text-red-600'"
+            title="{{ isLiked ? 'Unlike' : 'Like' }}">
+            <span class="text-2xl">
+              {{ isLiked ? '❤️' : '🤍' }}
+            </span>
+            <span class="ml-2">{{ post.likes?.length || 0 }}</span>
+          </div>
 
-   @if (post.imageUrl) {
-  <div class="flex justify-center mb-8">
-    <img 
-      [src]="post.imageUrl" 
-      alt="Post image"
-      class="rounded-xl max-h-[500px] max-w-full object-contain border border-gray-600"
-    />
-  </div>
-}
+          <div class="flex items-center cursor-pointer" (click)="toggleComments()"
+            [ngClass]="showComments ? 'text-blue-500' : 'text-gray-400 hover:text-blue-500'"
+            title="Toggle comments">
+            <span class="text-2xl">💬</span>
+            <span class="ml-2">{{ post.comments?.length || 0 }}</span>
+          </div>
+        </div>
 
-      <p class="text-center text-lg text-gray-300">
-        ❤️ {{ post.likes?.length || 0 }} Likes 
-        @if (isLiked) {
-          <span>(You liked this)</span>
+        @if (showComments) {
+          <div class="comments-section max-w-3xl mx-auto bg-gray-700 p-6 rounded-xl">
+            <div *ngFor="let comment of post.comments" class="mb-4 border-b border-gray-600 pb-2">
+              <p class="font-semibold text-white">
+                {{ comment.user.username }}
+                <span class="text-gray-400 text-sm">({{ comment.createdAt | date:'short' }})</span>
+              </p>
+              <p class="text-gray-300">{{ comment.comment }}</p>
+            </div>
+
+            <div class="mt-4">
+              <textarea [(ngModel)]="newComment" rows="3" class="w-full p-2 rounded-md text-black"
+                placeholder="Write a comment..."></textarea>
+              <button (click)="addComment()"
+                class="mt-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white">
+                Add Comment
+              </button>
+            </div>
+          </div>
         }
-        • 💬 {{ post.comments?.length || 0 }} Comments
-      </p>
+      }
     } @else {
       <p class="text-center text-gray-400 text-xl">Loading post...</p>
     }
