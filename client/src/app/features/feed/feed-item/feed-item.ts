@@ -18,7 +18,5 @@ export class FeedItem {
 
   constructor(private authService: AuthService) {}
 
-  get isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
+ 
 }

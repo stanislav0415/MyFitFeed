@@ -23,8 +23,6 @@
         />
       }
     </a>
-
-    @if (isLoggedIn) {
       <div class="flex gap-8 text-sm text-gray-500 dark:text-gray-400 mt-3">
         <button class="flex items-center gap-1 hover:text-red-500">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -42,6 +40,5 @@
           <span>{{ post.comments?.length || 0 }}</span>
         </button>
       </div>
-    }
   </div>
 </div>
