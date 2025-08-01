@@ -8,6 +8,7 @@ import { Post } from '../../models';
 })
 export class PostService {
   private readonly apiUrl = 'http://localhost:3000/posts';
+
   constructor(private httpClient: HttpClient) {}
 
   createPost(postData: Omit<Post, 'id' | 'createdAt'>): Observable<Post> {
@@ -20,12 +21,9 @@ export class PostService {
     return this.httpClient.get<Post[]>(this.apiUrl);
   }
 
-
-
-  getPostById(id: string): Observable<{ post: Post, isOwner: boolean, isLiked: boolean }> {
-  return this.httpClient.get<{ post: Post, isOwner: boolean, isLiked: boolean }>(`${this.apiUrl}/${id}`);
+  getPostById(id: string): Observable<{ post: Post; isOwner: boolean; isLiked: boolean }> {
+    return this.httpClient.get<{ post: Post; isOwner: boolean; isLiked: boolean }>(`${this.apiUrl}/${id}`);
   }
-
 
   updatePost(id: string, postData: Partial<Post>): Observable<Post> {
     return this.httpClient.put<Post>(`${this.apiUrl}/${id}`, postData, {
@@ -35,5 +33,22 @@ export class PostService {
 
   deletePost(id: string): Observable<void> {
     return this.httpClient.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  toggleLike(postId: string): Observable<Post> {
+    return this.httpClient.post<Post>(`${this.apiUrl}/${postId}/like`, null, {
+      withCredentials: true,
+    });
+  }
+
+  addComment(postId: string, comment: string): Observable<Post> {
+    return this.httpClient.post<Post>(
+      `${this.apiUrl}/${postId}/comment`,
+      { comment },
+      {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      }
+    );
   }
 }

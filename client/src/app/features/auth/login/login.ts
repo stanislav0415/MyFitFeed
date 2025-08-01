@@ -51,8 +51,7 @@ export class Login {
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
       this.authService.login(email, password).subscribe({
-        next: (user) => {
-          console.log('Login successful:', user);
+        next: () => {
           this.router.navigate(['/home']);
         },
         error: (err) => {
