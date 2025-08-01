@@ -38,7 +38,7 @@ export class AuthService {
       tap(response => {
         this._currentUser.set(response);
          localStorage.setItem('user',JSON.stringify(response));
-        localStorage.setItem('token',JSON.stringify(response.token));
+        localStorage.setItem('token',response.token ?? '');
         this._isLoggedIn.set(true);
       })
     );
@@ -56,7 +56,7 @@ export class AuthService {
       tap(response => {
         this._currentUser.set(response);
          localStorage.setItem('user',JSON.stringify(response));
-        localStorage.setItem('token',JSON.stringify(response.token));
+        localStorage.setItem('token',response.token ?? '');
         this._isLoggedIn.set(true);
       })
     );
@@ -66,6 +66,7 @@ export class AuthService {
     this._currentUser.set(null);
     this._isLoggedIn.set(false);
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
   }
   
   getCurrentUser(): User | null {
