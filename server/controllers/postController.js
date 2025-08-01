@@ -61,6 +61,23 @@ postController.post('/:postId/like', isAuth, async (req, res) => {
     res.status(400).json({ error: getErrorMessage(err) });
   }
 });
+postController.post('/:postId/comment', isAuth, async (req, res) => {
+  const postId = req.params.postId;
+  const userId = req.user.id;
+  const { comment } = req.body;
+
+  if (!comment || comment.trim() === '') {
+    return res.status(400).json({ error: 'Comment cannot be empty.' });
+  }
+
+  try {
+    const updatedPost = await postService.comment(postId, userId, comment.trim());
+    res.status(201).json(updatedPost);
+  } catch (err) {
+    res.status(400).json({ error: getErrorMessage(err) });
+  }
+});
+
 
 postController.delete('/:postId', isAuth, async (req, res) => {
   const postId = req.params.postId;
