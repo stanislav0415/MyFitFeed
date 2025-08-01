@@ -12,8 +12,6 @@ export async function auth(req, res, next) {
 
   const token = authHeader.split(' ')[1]?.trim();
 
-  console.log('Token string:', token);
-
   if (!token) {
 
     return res.status(401).json({ message: 'Token missing or malformed' });

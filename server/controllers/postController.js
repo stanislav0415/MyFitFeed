@@ -44,8 +44,6 @@ postController.get('/:postId', async (req, res) => {
     const isOwner = userId && postOwnerId === userId;
     const isLiked = userId && post.likes.some(likeUserId => likeUserId.toString() === userId);
 
-    console.log('Post owner ID:', postOwnerId);
-    console.log('Current user ID:', userId);
 
     res.json({ post, isOwner: !!isOwner, isLiked: !!isLiked });
   } catch (err) {
