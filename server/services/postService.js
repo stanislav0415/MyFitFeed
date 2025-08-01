@@ -10,7 +10,7 @@ export default {
       });
     }
 
-    return query.sort({ createdAt: -1 }); 
+    return query.sort({ createdAt: -1 });
   },
 
   getLatest() {
@@ -42,7 +42,15 @@ export default {
     post.likes = post.likes.filter(id => id.toString() !== userId.toString());
     return post.save();
   },
+  async toggleLike(postId, userId) {
+    const post = await this.getOne(postId);
 
+    if (post.likes.includes(userId)) {
+      return this.unlike(postId, userId);
+    } else {
+      return this.like(postId, userId);
+    }
+  },
   async comment(postId, userId, commentText) {
     const post = await this.getOne(postId);
 
