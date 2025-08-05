@@ -18,10 +18,10 @@ export default {
   },
 
   getOne(postId) {
-  return Post.findById(postId)
-    .populate('user', 'username') 
-    .populate('comments.user', 'username'); 
-},
+    return Post.findById(postId)
+      .populate('user', 'username')
+      .populate('comments.user', 'username');
+  },
 
 
   create(postData, userId) {
@@ -65,6 +65,34 @@ export default {
 
     return post.save();
   },
+  async updateComment(commentId, userId, newText) {
+    const post = await Post.findOne({ 'comments._id': commentId });
+
+    if (!post) throw new Error('Comment not found');
+
+    const comment = post.comments.id(commentId);
+    if (!comment.user.equals(userId)) {
+      throw new Error('You can only edit your own comments.');
+    }
+
+    comment.comment = newText;
+    return post.save();
+  },
+
+  async deleteComment(commentId, userId) {
+    const post = await Post.findOne({ 'comments._id': commentId });
+
+    if (!post) throw new Error('Comment not found');
+
+    const comment = post.comments.id(commentId);
+    if (!comment.user.equals(userId)) {
+      throw new Error('You can only delete your own comments.');
+    }
+
+    comment.remove();
+    return post.save();
+  },
+
 
   async delete(postId, userId) {
     const post = await this.getOne(postId);

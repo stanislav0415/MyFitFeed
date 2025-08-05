@@ -1,4 +1,5 @@
 import { Schema, model, Types } from 'mongoose';
+import commentSchema from './comment.js'; 
 
 const postSchema = new Schema({
   user: {
@@ -34,19 +35,12 @@ const postSchema = new Schema({
       ref: 'User',
     },
   ],
-  comments: [
-    {
-      user: { type: Types.ObjectId, ref: 'User' },
-      comment: { type: String, required: true },
-      createdAt: { type: Date, default: Date.now },
-    },
-  ],
+  comments: [commentSchema], 
   createdAt: {
     type: Date,
     default: Date.now,
   },
-},
-{
+}, {
   toJSON: {
     virtuals: true,
     versionKey: false,
@@ -56,6 +50,7 @@ const postSchema = new Schema({
     },
   },
 });
+
 const Post = model('Post', postSchema);
 
 export default Post;
