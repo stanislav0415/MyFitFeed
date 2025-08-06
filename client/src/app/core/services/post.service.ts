@@ -51,4 +51,24 @@ export class PostService {
       }
     );
   }
+
+  updateComment( postId:string, commentId: string, comment: string): Observable<any> {
+    return this.httpClient.put(
+      `http://localhost:3000/posts/${postId}/comments/${commentId}`,
+      { comment },
+      {
+        headers: { 'Content-Type': 'application/json' },
+        withCredentials: true,
+      }
+    );
+  }
+
+  deleteComment(postId:string, commentId: string): Observable<any> {
+    return this.httpClient.delete(
+      `http://localhost:3000/posts/${postId}/comments/${commentId}`,
+      {
+        withCredentials: true,
+      }
+    );
+  }
 }
