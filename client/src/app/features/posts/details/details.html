@@ -51,25 +51,21 @@
         </div>
 
         @if (showComments) {
-          <div class="comments-section max-w-3xl mx-auto bg-gray-700 p-6 rounded-xl">
-            <div *ngFor="let comment of post.comments" class="mb-4 border-b border-gray-600 pb-2">
-              <p class="font-semibold text-white">
-                {{ comment.user.username }}
-                <span class="text-gray-400 text-sm">({{ comment.createdAt | date:'short' }})</span>
-              </p>
-              <p class="text-gray-300">{{ comment.comment }}</p>
-            </div>
+  <app-comment
+    [comments]="post.comments || []"
+    [currentUser]="currentUser"
+    [editedComment]="editedComment"
+    [newComment]="newComment"
 
-            <div class="mt-4">
-              <textarea [(ngModel)]="newComment" rows="3" class="w-full p-2 rounded-md text-black"
-                placeholder="Write a comment..."></textarea>
-              <button (click)="addComment()"
-                class="mt-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white">
-                Add Comment
-              </button>
-            </div>
-          </div>
-        }
+    (addComment)="addComment()"
+    (deleteComment)="deleteComment($event)"
+    (editCommentStart)="startEdit($event)"
+    (editCommentCancel)="cancelEdit()"
+    (editCommentSave)="saveEditedComment()"
+    (newCommentChange)="onNewCommentChange($event)">
+  </app-comment>
+}
+
       }
     } @else {
       <p class="text-center text-gray-400 text-xl">Loading post...</p>

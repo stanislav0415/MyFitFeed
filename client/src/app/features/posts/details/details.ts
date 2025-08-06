@@ -5,12 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { Post } from '../../../models';
 import { PostService } from '../../../core/services/post.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { RouterModule } from '@angular/router'; 
-
+import { RouterModule } from '@angular/router';
+import {Comment} from '../comment/comment'; 
 @Component({
   selector: 'app-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule], 
+  imports: [CommonModule, FormsModule, RouterModule, Comment],
   templateUrl: './details.html',
   styleUrls: ['./details.css'],
 })
@@ -29,6 +29,9 @@ export class Details {
 
   showComments = false;
   newComment = '';
+  editedComment: { _id: string; comment: string } | null = null;
+
+  currentUser = this.authService.currentUser();
 
   constructor() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -38,7 +41,6 @@ export class Details {
           this.post = res.post;
           this.isOwner = res.isOwner;
           this.isLiked = res.isLiked;
-       
           this.loading = false;
         },
         error: (err) => {
@@ -52,9 +54,7 @@ export class Details {
   toggleLike(): void {
     if (!this.post) return;
 
-    const user = this.authService.getCurrentUser();
-    const currentUserId = user?._id;
-
+    const currentUserId = this.currentUser?._id;
     if (!currentUserId) {
       console.error('Invalid user ID.');
       return;
@@ -81,29 +81,61 @@ export class Details {
   addComment(): void {
     if (!this.post || !this.newComment.trim()) return;
 
-    const user = this.authService.currentUser();
-
+    const user = this.currentUser;
     if (!user || !user._id) {
       console.error('Invalid user.');
       return;
     }
 
-    const comment = {
-      user: {
-        _id: user._id,
-        username: user.username,
-      },
-      comment: this.newComment.trim(),
-      createdAt: new Date().toISOString(),
-    };
-
-    this.postService.addComment(this.post.id!, comment.comment).subscribe({
-      next: () => {
-        this.post!.comments = [...(this.post!.comments || []), comment];
+   
+    this.postService.addComment(this.post.id!, this.newComment.trim()).subscribe({
+      next: (updatedPost) => {
+        this.post!.comments = updatedPost.comments;
         this.newComment = '';
       },
       error: (err) => console.error('Error adding comment:', err),
     });
+  }
+  onNewCommentChange(value: string): void {
+  this.newComment = value;
+}
+
+  startEdit(comment: { _id: string; comment: string }): void {
+    this.editedComment = { ...comment };
+  }
+
+  cancelEdit(): void {
+    this.editedComment = null;
+  }
+
+  saveEditedComment(): void {
+    if (!this.editedComment || !this.editedComment.comment.trim()) return;
+
+    this.postService.updateComment(this.post!.id!, this.editedComment._id, this.editedComment.comment.trim()).subscribe({
+      next: (updatedComment) => {
+        if (!this.post?.comments) return;
+        updatedComment.user = this.currentUser; 
+        const index = this.post.comments.findIndex((c) => c._id === updatedComment._id);
+        if (index !== -1) {
+          this.post.comments[index] = updatedComment;
+        }
+        this.editedComment = null;
+      },
+      error: (err) => console.error('Error updating comment:', err),
+    });
+  }
+
+  deleteComment(commentId: string): void {
+    if (!this.post) return;
+
+    if (confirm('Are you sure you want to delete this comment?')) {
+      this.postService.deleteComment(this.post.id!, commentId).subscribe({
+        next: () => {
+          this.post!.comments = this.post!.comments!.filter((c) => c._id !== commentId);
+        },
+        error: (err) => console.error('Error deleting comment:', err),
+      });
+    }
   }
 
   deletePost(): void {
@@ -111,9 +143,7 @@ export class Details {
 
     if (confirm('Are you sure you want to delete this post?')) {
       this.postService.deletePost(this.post.id!).subscribe({
-        next: () => {
-          this.router.navigate(['/']); 
-        },
+        next: () => this.router.navigate(['/']),
         error: (err) => console.error('Error deleting post:', err),
       });
     }
