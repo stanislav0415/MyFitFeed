@@ -60,7 +60,7 @@ export class Create {
       const postData = this.postFormService.getFormValue(this.postForm);
       this.postService.createPost(postData)
       .subscribe({
-        next: () => this.router.navigate(['/home']),
+        next: () => this.router.navigate(['/posts']),
         error: (err) => {
           this.serverErrorMessage = err?.error?.message || 'Something went wrong. Please try again.';
           this.postFormService.markFormTouched(this.postForm);

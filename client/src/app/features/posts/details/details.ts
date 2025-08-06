@@ -143,7 +143,7 @@ export class Details {
 
     if (confirm('Are you sure you want to delete this post?')) {
       this.postService.deletePost(this.post.id!).subscribe({
-        next: () => this.router.navigate(['/feed']),
+        next: () => this.router.navigate(['/posts']),
         error: (err) => console.error('Error deleting post:', err),
       });
     }
