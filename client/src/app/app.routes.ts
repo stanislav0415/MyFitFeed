@@ -28,5 +28,8 @@ export const routes: Routes = [
     }, {
         path: 'posts/:id',
         loadComponent: () => import('./features/posts/details/details').then(c => c.Details)
+    },{
+        path: 'posts/:id/edit',
+        loadComponent: () => import('./features/posts/edit/edit').then(c => c.Edit)
     }
 ];
