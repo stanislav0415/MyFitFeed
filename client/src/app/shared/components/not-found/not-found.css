@@ -1,0 +1,42 @@
+.not-found-container {
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; 
+  align-items: center;
+  padding-top: 80px; 
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+}
+
+
+.not-found-container h1 {
+  font-size: 8rem;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.not-found-container p {
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+  color: white;
+}
+
+.back-home {
+  text-decoration: none;
+  background-color: #2979ff; 
+  color: #fff;
+  padding: 12px 30px;
+  border-radius: 5px;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(41, 121, 255, 0.4);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;  
+}
+
+.back-home:hover {
+  background-color: #1c54b2;
+  box-shadow: 0 6px 20px rgba(28, 84, 178, 0.7);
+  cursor: pointer;
+}
