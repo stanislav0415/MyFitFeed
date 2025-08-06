@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Post } from '../../../models';
 import { PostService } from '../../../core/services/post.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { RouterModule } from '@angular/router';
-import {Comment} from '../comment/comment'; 
+import { map, switchMap } from 'rxjs/operators';
+import { Comment } from '../comment/comment';
+
 @Component({
   selector: 'app-details',
   standalone: true,
@@ -34,21 +35,21 @@ export class Details {
   currentUser = this.authService.currentUser();
 
   constructor() {
-    const id = this.route.snapshot.paramMap.get('id');
-    if (id) {
-      this.postService.getPostById(id).subscribe({
-        next: (res) => {
-          this.post = res.post;
-          this.isOwner = res.isOwner;
-          this.isLiked = res.isLiked;
-          this.loading = false;
-        },
-        error: (err) => {
-          console.error('Failed to load post:', err);
-          this.loading = false;
-        },
-      });
-    }
+    this.route.paramMap.pipe(
+      map(params => params.get('id')),                      
+      switchMap(id => this.postService.getPostById(id!))  
+    ).subscribe({
+      next: (res) => {
+        this.post = res.post;
+        this.isOwner = res.isOwner;
+        this.isLiked = res.isLiked;
+        this.loading = false;
+      },
+      error: (err) => {
+        console.error('Failed to load post:', err);
+        this.loading = false;
+      },
+    });
   }
 
   toggleLike(): void {
@@ -87,7 +88,6 @@ export class Details {
       return;
     }
 
-   
     this.postService.addComment(this.post.id!, this.newComment.trim()).subscribe({
       next: (updatedPost) => {
         this.post!.comments = updatedPost.comments;
@@ -96,9 +96,10 @@ export class Details {
       error: (err) => console.error('Error adding comment:', err),
     });
   }
+
   onNewCommentChange(value: string): void {
-  this.newComment = value;
-}
+    this.newComment = value;
+  }
 
   startEdit(comment: { _id: string; comment: string }): void {
     this.editedComment = { ...comment };
@@ -114,7 +115,7 @@ export class Details {
     this.postService.updateComment(this.post!.id!, this.editedComment._id, this.editedComment.comment.trim()).subscribe({
       next: (updatedComment) => {
         if (!this.post?.comments) return;
-        updatedComment.user = this.currentUser; 
+        updatedComment.user = this.currentUser;
         const index = this.post.comments.findIndex((c) => c._id === updatedComment._id);
         if (index !== -1) {
           this.post.comments[index] = updatedComment;
