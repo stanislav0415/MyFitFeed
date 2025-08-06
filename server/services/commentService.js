@@ -1,4 +1,4 @@
-import Post from '../models/post.js'; 
+import Post from '../models/post.js';
 import mongoose from 'mongoose';
 
 export default {
@@ -15,7 +15,7 @@ export default {
     post.comments.push(comment);
     await post.save();
 
-    return post.comments[post.comments.length - 1];
+    return post.comments[post.comments.length - 1]; // raw comment, user is just ObjectId
   },
 
   async editComment(postId, commentId, userId, newCommentText) {
@@ -31,7 +31,7 @@ export default {
     comment.comment = newCommentText;
     await post.save();
 
-    return comment;
+    return comment; // raw comment, user is ObjectId
   },
 
   async deleteComment(postId, commentId, userId) {
@@ -44,7 +44,7 @@ export default {
       throw new Error('Not authorized to delete this comment');
     }
 
-    comment.remove();
+    post.comments.pull(commentId);
     await post.save();
 
     return true;
