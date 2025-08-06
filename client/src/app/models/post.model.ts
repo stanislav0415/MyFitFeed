@@ -6,6 +6,7 @@ export interface Post {
   createdAt?: string;
   likes?: string[]; 
   comments?: {
+    _id: string;
     user: {
       _id: string;
       username: string;
