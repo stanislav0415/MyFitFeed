@@ -54,17 +54,7 @@ export default {
       return this.like(postId, userId);
     }
   },
-  async comment(postId, userId, commentText) {
-    const post = await this.getOne(postId);
 
-    post.comments.push({
-      user: userId,
-      comment: commentText,
-      createdAt: new Date(),
-    });
-
-    return post.save();
-  },
   async updateComment(commentId, userId, newText) {
     const post = await Post.findOne({ 'comments._id': commentId });
 

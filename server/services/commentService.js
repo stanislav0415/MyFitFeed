@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 export default {
   async addComment(postId, userId, commentText) {
     const comment = {
-      user: mongoose.Types.ObjectId(userId),
+     user: new mongoose.Types.ObjectId(userId),
       comment: commentText,
       createdAt: new Date(),
     };
@@ -14,8 +14,9 @@ export default {
 
     post.comments.push(comment);
     await post.save();
-
-    return post.comments[post.comments.length - 1]; // raw comment, user is just ObjectId
+    const updatedPost = await Post.findById(postId).populate('comments.user', 'username'); 
+    return updatedPost;
+  
   },
 
   async editComment(postId, commentId, userId, newCommentText) {
