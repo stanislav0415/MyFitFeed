@@ -1,22 +1,42 @@
-<div class="comments-section max-w-3xl mx-auto bg-gray-700 p-6 rounded-xl">
-  @for (comment of comments; track comment.id) {
-    <div class="mb-4 border-b border-gray-600 pb-2">
-      <p class="font-semibold text-white">
-        {{ comment.user.username }}
-        <span class="text-gray-400 text-sm">
-          ({{ comment.createdAt | date: 'short' }})
-        </span>
-      </p>
-      <p class="text-gray-300">{{ comment.comment }}</p>
-    </div>
-  }
+@for (comment of comments; track comment._id) {
+  <div class="mb-4 border-b border-gray-600 pb-2">
+    <p class="font-semibold text-white">
+      {{ comment.user.username }}
+      <span class="text-gray-400 text-sm">({{ comment.createdAt | date:'short' }})</span>
+    </p>
 
-  <div class="mt-4">
-    <textarea [(ngModel)]="newComment" rows="3" class="w-full p-2 rounded-md text-black"
-      placeholder="Write a comment..."></textarea>
-    <button (click)="addComment()"
-      class="mt-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white">
-      Add Comment
-    </button>
+    @if (editedComment?._id !== comment._id) {
+      <p class="text-gray-300">{{ comment.comment }}</p>
+    } @else {
+      <textarea [(ngModel)]="editedComment!.comment" rows="2"
+        class="w-full p-2 rounded-md text-black mt-2"></textarea>
+      <div class="mt-2 flex gap-2">
+        <button (click)="onSaveEditedComment()" class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md">
+          Save
+        </button>
+        <button (click)="onCancelEdit()" class="px-3 py-1 bg-gray-500 hover:bg-gray-600 text-white rounded-md">
+          Cancel
+        </button>
+      </div>
+    }
+
+    @if (comment.user._id === currentUser?._id && editedComment?._id !== comment._id) {
+      <div class="flex gap-2 mt-2">
+        <button (click)="onStartEdit(comment)" class="text-sm text-yellow-400 hover:underline">✏️ Edit</button>
+        <button (click)="onDeleteComment(comment._id)" class="text-sm text-red-500 hover:underline">🗑️ Delete</button>
+      </div>
+    }
   </div>
+}
+
+<div class="mt-4">
+  <textarea
+    [ngModel]="newComment"
+    (ngModelChange)="onNewCommentChange($event)"
+    rows="3"
+    class="w-full p-2 rounded-md text-black"
+    placeholder="Write a comment..."></textarea>
+  <button (click)="onAddComment()" class="mt-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-md text-white">
+    Add Comment
+  </button>
 </div>
